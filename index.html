@@ -85,6 +85,7 @@ button:disabled {
     margin-top:15px;
     font-weight:bold;
     color:#6bbcff;
+    min-height: 20px;
 }
 
 /* Custom layout for the unlocked key area */
@@ -137,18 +138,21 @@ button:disabled {
 <button>🔑 GENERATED KEYS</button>
 </a>
 
-<a href="https://discord.gg/YOURINVITE" target="_blank">
+<a href="https://discord.gg/2vmkp47b4" target="_blank">
 <button>💬 Discord</button>
 </a>
 
-<a href="https://youtube.com/@YOURCHANNEL" target="_blank">
+<a href="https://youtube.com/@PixelOnTopp" target="_blank">
 <button>▶️ YouTube</button>
 </a>
 
 </div>
 
 <script>
-// Configuration Settings
+// ==================== CONFIGURATION SETTINGS ====================
+// ⚠️ PASTE YOUR LIVE CLOUDFLARE WORKER ROUTE URL HERE (No trailing slash)
+const BACKEND_URL = "https://pixel-key-backend.yourname.workers.dev"; 
+
 const LINKVERTISE_URL = "https://direct-link.net/6952702/cA4UZzAjrUr6"; 
 const CLEAN_MAIN_URL = "https://pixelontopp.github.io/pixelhub/";
 
@@ -174,12 +178,12 @@ window.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // 3. Process user landing back from Linkvertise
+    // 3. Process user landing back from Linkvertise (?status=completed)
     if (urlParams.get('status') === 'completed') {
         const clickTime = localStorage.getItem('clickTime');
         const currentTime = Date.now();
 
-        // Speed check to catch link bypass tools
+        -- Speed check to catch link bypass bots/tools
         if (!clickTime || (currentTime - clickTime) < MINIMUM_TIME_REQUIRED) {
             const newBanExpiry = Date.now() + BAN_DURATION;
             localStorage.setItem('bannedUntil', newBanExpiry);
@@ -190,19 +194,38 @@ window.addEventListener('DOMContentLoaded', () => {
         genBtn.innerHTML = "Verifying...";
         genBtn.disabled = true;
         statusDiv.style.color = "#22c55e";
-        statusDiv.innerHTML = "Processing system check...";
+        statusDiv.innerHTML = "Syncing key with secure database...";
         
-        setTimeout(() => {
-            // Generate their static unique 6-digit permanent key identity
-            const randomID = Math.floor(100000 + Math.random() * 900000);
-            const newPermanentKey = "PIXELKEY_PERM_" + randomID;
-            
-            // Lock it into browser memory
-            localStorage.setItem('pixelPermanentKey', newPermanentKey);
-            localStorage.removeItem('clickTime'); 
-            
-            showPermanentKey(newPermanentKey);
-        }, 1200);
+        // Generate their static unique 6-digit permanent key identity
+        const randomID = Math.floor(100000 + Math.random() * 900000);
+        const newPermanentKey = "PIXELKEY_PERM_" + randomID;
+
+        // Automatically pass 'PIXELMASTER_2026' to your backend in the background 
+        // so it passes the safety check and writes the generated key to your KV database
+        fetch(`${BACKEND_URL}/addkey`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ secretCode: "PIXELMASTER_2026", generatedKey: newPermanentKey })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Lock it into local browser memory
+                localStorage.setItem('pixelPermanentKey', newPermanentKey);
+                localStorage.removeItem('clickTime'); 
+                showPermanentKey(newPermanentKey);
+                statusDiv.innerHTML = "";
+            }
+        })
+        .catch(err => {
+            statusDiv.style.color = "#ef4444";
+            statusDiv.innerHTML = "Database registration error! Try again.";
+            genBtn.disabled = false;
+            genBtn.innerHTML = "Generate Key";
+        });
     }
 });
 
@@ -216,11 +239,11 @@ function generateKey(){
     document.getElementById("status").innerHTML = "Redirecting to Linkvertise...";
 
     setTimeout(() => {
-        window.location.href = https://link-hub.net/1406248/x5BzaK3UXP3R;
+        window.location.href = LINKVERTISE_URL;
     }, 1000);
 }
 
-// Renders the key box layout with your new Copy button
+// Renders the key box layout with your clean Copy button
 function showPermanentKey(key) {
     const statusDiv = document.getElementById("status");
     const genBtn = document.getElementById("genBtn");
@@ -242,18 +265,15 @@ function copyAndRedirect(key) {
     navigator.clipboard.writeText(key).then(() => {
         const copyBtn = document.getElementById("copyBtn");
         
-        // Trigger success animation styles
         copyBtn.classList.add("success-animate");
         copyBtn.innerHTML = "✨ Copied Key!";
         copyBtn.style.background = "#10b981"; 
         
-        // Delay redirection slightly so they can appreciate the clean animation
         setTimeout(() => {
-            window.location.href = https://pixelontopp.github.io/pixelhub/;
+            window.location.href = CLEAN_MAIN_URL;
         }, 1200);
     }).catch(err => {
-        // Fallback redirection safety net
-        window.location.href = https://pixelontopp.github.io/pixelhub/;
+        window.location.href = CLEAN_MAIN_URL;
     });
 }
 
