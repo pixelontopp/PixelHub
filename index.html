@@ -49,8 +49,13 @@ button{
     transition:.25s;
 }
 
-button:hover{
+button:hover:not(:disabled){
     transform:scale(1.03);
+}
+
+button:disabled {
+    background: #4b5563;
+    cursor: not-allowed;
 }
 
 #status{
@@ -67,7 +72,7 @@ button:hover{
 
 <h1>Pixel Hub</h1>
 
-<button onclick="generateKey()">Generate Key</button>
+<button id="genBtn" onclick="generateKey()">Generate Key</button>
 
 <div id="status"></div>
 
@@ -86,35 +91,99 @@ button:hover{
 </div>
 
 <script>
-let hasGenerated = false;
+const LINKVERTISE_URL = "https://link-hub.net/1406248/JoChKQi2Tzdg"; 
+const MINIMUM_TIME_REQUIRED = 15000; // 15 seconds minimum (Adjust as needed)
+const BAN_DURATION = 120000; // 2 minutes in milliseconds
 
-function generateKey(){
-    const status = document.getElementById("status");
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const statusDiv = document.getElementById("status");
+    const genBtn = document.getElementById("genBtn");
 
-    if(hasGenerated){
-        status.style.color = "#ff4a4a"; 
-        status.innerHTML = "You have already generated a key!";
+    // 1. Check if the user is currently banned
+    const bannedUntil = localStorage.getItem('bannedUntil');
+    if (bannedUntil && Date.now() < bannedUntil) {
+        startBanCountdown(bannedUntil - Date.now());
         return;
     }
 
-    hasGenerated = true;
+    // 2. Process returning user
+    if (urlParams.get('status') === 'completed') {
+        const clickTime = localStorage.getItem('clickTime');
+        const currentTime = Date.now();
+
+        // If they have no click timestamp, or they completed it faster than MINIMUM_TIME_REQUIRED
+        if (!clickTime || (currentTime - clickTime) < MINIMUM_TIME_REQUIRED) {
+            // Trigger the 2-minute ban
+            const newBanExpiry = Date.now() + BAN_DURATION;
+            localStorage.setItem('bannedUntil', newBanExpiry);
+            startBanCountdown(BAN_DURATION);
+            return;
+        }
+
+        // Clean pass: User took an appropriate amount of time
+        genBtn.innerHTML = "Key Unlocked";
+        genBtn.style.background = "#22c55e"; 
+        genBtn.disabled = true;
+
+        statusDiv.style.color = "#22c55e";
+        statusDiv.innerHTML = "Verifying completion... Done!";
+        
+        setTimeout(() => {
+            const hourID = Math.floor(Date.now() / 3600000); 
+            const scrambled = (hourID * 3) + 102345; 
+            statusDiv.innerHTML = "YOUR KEY:<br><span style='color:white; font-size:18px; display:inline-block; margin-top:8px;'>PIXELKEY_" + scrambled + "</span>";
+            
+            // Clear timestamps once successfully claimed
+            localStorage.removeItem('clickTime');
+        }, 1500);
+    }
+});
+
+function generateKey(){
+    const status = document.getElementById("status");
+    
+    // Save the exact millisecond they clicked the button
+    localStorage.setItem('clickTime', Date.now());
+
     status.style.color = "#6bbcff";
+    status.innerHTML = "Redirecting to Linkvertise...";
 
-    let seconds = 30;
-    status.innerHTML = "Loading... " + seconds + "s";
+    setTimeout(() => {
+        window.location.href = LINKVERTISE_URL;
+    }, 1000);
+}
 
-    const timer = setInterval(function(){
-        seconds--;
-        status.innerHTML = "Loading... " + seconds + "s";
+// Function to handle the 2-minute visual lockdown
+function startBanCountdown(duration) {
+    const statusDiv = document.getElementById("status");
+    const genBtn = document.getElementById("genBtn");
+    
+    genBtn.disabled = true;
+    genBtn.innerHTML = "System Locked";
+    genBtn.style.background = "#ef4444"; // Red button
 
-        if(seconds <= 0){
-            clearInterval(timer);
+    let timeRemaining = Math.ceil(duration / 1000);
+    statusDiv.style.color = "#ff4a4a";
+    statusDiv.innerHTML = `Bypass detected! You are blocked for ${timeRemaining}s`;
+
+    const banTimer = setInterval(() => {
+        timeRemaining--;
+        statusDiv.innerHTML = `Bypass detected! You are blocked for ${timeRemaining}s`;
+
+        if (timeRemaining <= 0) {
+            clearInterval(banTimer);
+            localStorage.removeItem('bannedUntil');
+            localStorage.removeItem('clickTime');
             
-            // Mathematical time encoding algorithm
-            const hourID = Math.floor(Date.now() / 3600000); // Current UTC Hour
-            const scrambled = (hourID * 3) + 102345; // Secret salt formula
+            // Reset page state back to normal
+            genBtn.disabled = false;
+            genBtn.innerHTML = "Generate Key";
+            genBtn.style.background = "#3b82f6";
+            statusDiv.innerHTML = "";
             
-            status.innerHTML = "PIXELKEY_" + scrambled;
+            // Clean up the URL so they can retry fairly
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
     }, 1000);
 }
