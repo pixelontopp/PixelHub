@@ -23,7 +23,7 @@ body {
     overflow: hidden;
 }
 
-/* --- Hamburger Menu Icon --- */
+/* --- Hamburger Menu Icon (Three Lines) --- */
 .menu-btn {
     position: fixed;
     top: 25px;
@@ -34,7 +34,6 @@ body {
     flex-direction: column;
     gap: 6px;
     padding: 5px;
-    transition: 0.3s;
 }
 
 .menu-btn .bar {
@@ -42,14 +41,15 @@ body {
     height: 3px;
     background-color: #6bbcff;
     border-radius: 2px;
-    transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: 0.3s ease;
 }
 
+/* Transforms the 3 lines into an X when opened */
 .menu-btn.open .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
 .menu-btn.open .bar:nth-child(2) { opacity: 0; }
 .menu-btn.open .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-/* --- Sidebar Dashboard --- */
+/* --- Sidebar Dashboard Panel --- */
 .sidebar {
     position: fixed;
     top: 0;
@@ -59,17 +59,21 @@ body {
     background: #0d182b; 
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 1000;
-    transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: 0.3s ease;
     padding: 90px 20px 20px 20px;
     box-shadow: 5px 0 30px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
     gap: 25px;
     overflow-y: auto;
+    
+    /* CRITICAL FIX: Prevents the closed sidebar from blocking screen clicks */
+    visibility: hidden; 
 }
 
 .sidebar.open {
     left: 0;
+    visibility: visible;
 }
 
 .sidebar h2 {
@@ -151,18 +155,7 @@ body {
     color: #34d399;
 }
 
-/* --- Main Central Card --- */
-@keyframes fadeInUp {
-    from { transform: translateY(20px); }
-    to { transform: translateY(0); }
-}
-
-@keyframes pulseGlow {
-    0% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-    50% { box-shadow: 0 0 35px rgba(107, 188, 255, 0.5); }
-    100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-}
-
+/* --- Main Central Card UI --- */
 .card {
     width: 360px;
     background: #13233f; 
@@ -170,10 +163,9 @@ body {
     border-radius: 18px;
     padding: 25px;
     text-align: center;
-    opacity: 1; /* Kept at 1 so it never accidentally stays invisible */
-    animation: fadeInUp 0.4s ease-out forwards, pulseGlow 4s infinite ease-in-out;
     position: relative;
     z-index: 10;
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.2);
 }
 
 h1 {
@@ -181,7 +173,6 @@ h1 {
     margin-bottom: 18px;
     font-size: 28px;
     letter-spacing: 1px;
-    text-shadow: 0 0 10px rgba(107, 188, 255, 0.5);
 }
 
 button {
@@ -195,18 +186,18 @@ button {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.25s;
+    transition: transform 0.15s ease, background 0.2s;
     position: relative;
     overflow: hidden;
 }
 
 button:hover {
-    transform: scale(1.04);
+    transform: scale(1.03);
     background: #2563eb;
 }
 
 button:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
 }
 
 #status {
@@ -216,53 +207,10 @@ button:active {
     min-height: 20px;
 }
 
-/* --- Particles --- */
+/* --- Particle Sparks Effect --- */
 .particle {
     position: fixed;
     pointer-events: none;
     border-radius: 50%;
-    animation: explode 0.6s ease-out forwards;
-    z-index: 9999;
-}
-
-@keyframes explode {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    100% { transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0); opacity: 0; }
-}
-
-/* Scrollbars */
-.sidebar::-webkit-scrollbar, .history-container::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-thumb, .history-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-</style>
-</head>
-
-<body>
-
-<div class="menu-btn" id="menuBtn" onclick="toggleSidebar()">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-</div>
-
-<div class="sidebar" id="sidebar">
-    <h2>Dashboard</h2>
-    
-    <div class="sidebar-section">
-        <h3>🔑 Permanent Key</h3>
-        <div class="key-box permanent">PIXEL_PERM_👑_UNLOCKED</div>
-    </div>
-
-    <div class="sidebar-section">
-        <h3>✨ Current Generated Key</h3>
-        <div class="key-box" id="sidebar-current-key">No active key generated</div>
-    </div>
-
-    <div class="sidebar-section">
-        <h3>📜 History Log</h3>
-        <div class="history-container" id="history-log">
-            <div class="history-item expired">
-                <span class="key-text">PIXELKEY_843110</span>
-                <span class="status-badge">Expired</span>
-            </div>
-            <div class="history-item expired">
-                <span class="key-
+    animation: explode 0.5s ease-out forwards;
+    z-index: 999
