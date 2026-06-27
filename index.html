@@ -14,14 +14,7 @@
 }
 
 body {
-    /* Solid fallback color first so the page is never blank */
     background-color: #08111f; 
-    /* Browser-friendly Roblox asset proxy endpoint */
-    background: linear-gradient(rgba(8, 17, 31, 0.85), rgba(8, 17, 31, 0.85)), 
-                url('https://www.roblox.com/asset-thumbnail/image?assetId=90067703911337&width=768&height=432&format=png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
     color: white;
     display: flex;
     justify-content: center;
@@ -63,10 +56,7 @@ body {
     left: -340px;
     width: 320px;
     height: 100vh;
-    background: #0d182b; /* Solid fallback */
-    background: rgba(13, 24, 43, 0.95);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+    background: #0d182b; 
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 1000;
     transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -163,8 +153,8 @@ body {
 
 /* --- Main Central Card --- */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
 }
 
 @keyframes pulseGlow {
@@ -175,16 +165,13 @@ body {
 
 .card {
     width: 360px;
-    background: #13233f; /* Solid fallback background if blur fails */
-    background: rgba(19, 35, 63, 0.93);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: #13233f; 
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 18px;
     padding: 25px;
     text-align: center;
-    opacity: 0; /* Handled by animation */
-    animation: fadeInUp 0.5s ease-out forwards, pulseGlow 4s infinite ease-in-out;
+    opacity: 1; /* Kept at 1 so it never accidentally stays invisible */
+    animation: fadeInUp 0.4s ease-out forwards, pulseGlow 4s infinite ease-in-out;
     position: relative;
     z-index: 10;
 }
@@ -278,55 +265,4 @@ button:active {
                 <span class="status-badge">Expired</span>
             </div>
             <div class="history-item expired">
-                <span class="key-text">PIXELKEY_845321</span>
-                <span class="status-badge">Expired</span>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    <h1>Pixel Hub</h1>
-    <button onclick="generateKey()">Generate Key</button>
-    <div id="status"></div>
-
-    <a href="https://discord.gg/VbzEHgtBR" target="_blank" style="text-decoration: none;">
-        <button>💬 Discord</button>
-    </a>
-    <a href="https://youtube.com/@PixelOnTopp" target="_blank" style="text-decoration: none;">
-        <button>▶️ YouTube</button>
-    </a>
-</div>
-
-<script>
-let hasGenerated = false;
-
-function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    const menuBtn = document.getElementById("menuBtn");
-    sidebar.classList.toggle("open");
-    menuBtn.classList.toggle("open");
-}
-
-function generateKey(){
-    const status = document.getElementById("status");
-    const sidebarCurrent = document.getElementById("sidebar-current-key");
-    const historyLog = document.getElementById("history-log");
-
-    if(hasGenerated){
-        status.style.color = "#ff4a4a"; 
-        status.innerHTML = "You have already generated a key!";
-        return;
-    }
-
-    hasGenerated = true;
-    status.style.color = "#6bbcff";
-
-    let seconds = 30;
-    status.innerHTML = "Loading... " + seconds + "s";
-
-    const timer = setInterval(function(){
-        seconds--;
-        status.innerHTML = "Loading... " + seconds + "s";
-
-        if(seconds <=
+                <span class="key-
