@@ -14,8 +14,11 @@
 }
 
 body {
+    /* Solid fallback color first so the page is never blank */
+    background-color: #08111f; 
+    /* Browser-friendly Roblox asset proxy endpoint */
     background: linear-gradient(rgba(8, 17, 31, 0.85), rgba(8, 17, 31, 0.85)), 
-                url('https://assetdelivery.roblox.com/v1/asset/?id=90067703911337');
+                url('https://www.roblox.com/asset-thumbnail/image?assetId=90067703911337&width=768&height=432&format=png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -49,7 +52,6 @@ body {
     transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Transforms 3 lines into an 'X' when open */
 .menu-btn.open .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
 .menu-btn.open .bar:nth-child(2) { opacity: 0; }
 .menu-btn.open .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
@@ -61,7 +63,9 @@ body {
     left: -340px;
     width: 320px;
     height: 100vh;
-    background: rgba(13, 24, 43, 0.92);
+    background: #0d182b; /* Solid fallback */
+    background: rgba(13, 24, 43, 0.95);
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 1000;
@@ -93,7 +97,6 @@ body {
     margin-bottom: 10px;
 }
 
-/* Key visual display containers */
 .key-box {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -104,3 +107,226 @@ body {
     font-size: 14px;
     text-align: center;
 }
+
+.key-box.permanent {
+    border-color: #f59e0b;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.05);
+    text-shadow: 0 0 5px rgba(245, 158, 11, 0.3);
+}
+
+.history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.history-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #ef4444;
+    font-size: 13px;
+}
+
+.history-item.active {
+    border-left-color: #10b981;
+}
+
+.history-item .key-text {
+    font-family: monospace;
+    color: #e2e8f0;
+}
+
+.status-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.history-item.expired .status-badge {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+}
+
+.history-item.active .status-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+}
+
+/* --- Main Central Card --- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+    50% { box-shadow: 0 0 35px rgba(107, 188, 255, 0.5); }
+    100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+}
+
+.card {
+    width: 360px;
+    background: #13233f; /* Solid fallback background if blur fails */
+    background: rgba(19, 35, 63, 0.93);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px;
+    padding: 25px;
+    text-align: center;
+    opacity: 0; /* Handled by animation */
+    animation: fadeInUp 0.5s ease-out forwards, pulseGlow 4s infinite ease-in-out;
+    position: relative;
+    z-index: 10;
+}
+
+h1 {
+    color: #6bbcff;
+    margin-bottom: 18px;
+    font-size: 28px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(107, 188, 255, 0.5);
+}
+
+button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #3b82f6;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.25s;
+    position: relative;
+    overflow: hidden;
+}
+
+button:hover {
+    transform: scale(1.04);
+    background: #2563eb;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+#status {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #6bbcff;
+    min-height: 20px;
+}
+
+/* --- Particles --- */
+.particle {
+    position: fixed;
+    pointer-events: none;
+    border-radius: 50%;
+    animation: explode 0.6s ease-out forwards;
+    z-index: 9999;
+}
+
+@keyframes explode {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0); opacity: 0; }
+}
+
+/* Scrollbars */
+.sidebar::-webkit-scrollbar, .history-container::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb, .history-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+</style>
+</head>
+
+<body>
+
+<div class="menu-btn" id="menuBtn" onclick="toggleSidebar()">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+</div>
+
+<div class="sidebar" id="sidebar">
+    <h2>Dashboard</h2>
+    
+    <div class="sidebar-section">
+        <h3>🔑 Permanent Key</h3>
+        <div class="key-box permanent">PIXEL_PERM_👑_UNLOCKED</div>
+    </div>
+
+    <div class="sidebar-section">
+        <h3>✨ Current Generated Key</h3>
+        <div class="key-box" id="sidebar-current-key">No active key generated</div>
+    </div>
+
+    <div class="sidebar-section">
+        <h3>📜 History Log</h3>
+        <div class="history-container" id="history-log">
+            <div class="history-item expired">
+                <span class="key-text">PIXELKEY_843110</span>
+                <span class="status-badge">Expired</span>
+            </div>
+            <div class="history-item expired">
+                <span class="key-text">PIXELKEY_845321</span>
+                <span class="status-badge">Expired</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h1>Pixel Hub</h1>
+    <button onclick="generateKey()">Generate Key</button>
+    <div id="status"></div>
+
+    <a href="https://discord.gg/VbzEHgtBR" target="_blank" style="text-decoration: none;">
+        <button>💬 Discord</button>
+    </a>
+    <a href="https://youtube.com/@PixelOnTopp" target="_blank" style="text-decoration: none;">
+        <button>▶️ YouTube</button>
+    </a>
+</div>
+
+<script>
+let hasGenerated = false;
+
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const menuBtn = document.getElementById("menuBtn");
+    sidebar.classList.toggle("open");
+    menuBtn.classList.toggle("open");
+}
+
+function generateKey(){
+    const status = document.getElementById("status");
+    const sidebarCurrent = document.getElementById("sidebar-current-key");
+    const historyLog = document.getElementById("history-log");
+
+    if(hasGenerated){
+        status.style.color = "#ff4a4a"; 
+        status.innerHTML = "You have already generated a key!";
+        return;
+    }
+
+    hasGenerated = true;
+    status.style.color = "#6bbcff";
+
+    let seconds = 30;
+    status.innerHTML = "Loading... " + seconds + "s";
+
+    const timer = setInterval(function(){
+        seconds--;
+        status.innerHTML = "Loading... " + seconds + "s";
+
+        if(seconds <=
