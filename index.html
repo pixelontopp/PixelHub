@@ -150,15 +150,13 @@ button:disabled {
 
 <script>
 // ==================== CONFIGURATION SETTINGS ====================
-// ⚠️ PASTE YOUR LIVE CLOUDFLARE WORKER ROUTE URL HERE (No trailing slash)
 const BACKEND_URL = "https://pixel-key-backend.helloytrbx.workers.dev"; 
-
 const LINKVERTISE_URL = "https://link-hub.net/1406248/x5BzaK3UXP3R"; 
 const CLEAN_MAIN_URL = "https://pixelontopp.github.io/pixelhub/";
 
 const MINIMUM_TIME_REQUIRED = 15000; // 15 seconds bypass protection
 const BAN_DURATION = 120000; // 2 minutes bypass ban
-l
+
 window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const statusDiv = document.getElementById("status");
@@ -183,7 +181,6 @@ window.addEventListener('DOMContentLoaded', () => {
         const clickTime = localStorage.getItem('clickTime');
         const currentTime = Date.now();
 
-        // Fixed comment syntax error here
         if (!clickTime || (currentTime - clickTime) < MINIMUM_TIME_REQUIRED) {
             const newBanExpiry = Date.now() + BAN_DURATION;
             localStorage.setItem('bannedUntil', newBanExpiry);
